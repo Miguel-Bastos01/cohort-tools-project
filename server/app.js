@@ -32,7 +32,6 @@ const cohortsSchema = new Schema({
 const Cohort = mongoose.model("Cohort", cohortsSchema);
 
 const studentsSchema = new Schema({
-  _id: String,
   firstName: String,
   lastName: String,
   email: String,
@@ -163,7 +162,6 @@ app.delete("/cohorts/:cohortId", (req, res) => {
 
 app.post("/students", (req, res) => {
   const {
-    _id,
     firstName,
     lastName,
     email,
@@ -178,7 +176,6 @@ app.post("/students", (req, res) => {
   } = req.body;
 
   Student.create({
-    _id,
     firstName,
     lastName,
     email,
