@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const {model} = mongoose
 const Schema = mongoose.Schema;
 const PORT = 5005;
 
@@ -109,7 +110,7 @@ const studentsSchema = new Schema({
     default: "https://i.imgur.com/r8bo8u7.png",
   },
   projects: [],
-  cohort: String,
+  cohort:[ { type: Schema.Types.ObjectId, ref: '_id' }],
 });
 
 const Student = mongoose.model("Student", studentsSchema);
@@ -265,7 +266,7 @@ app.post("/students", (req, res) => {
 
 app.get("/students", (req, res) => {
   Student.find()
-    .populate("pupils")
+    .populate("_id")
     .then((allStudents) => {
       res.status(200).json(allStudents);
     })
@@ -284,7 +285,7 @@ app.get("/students/cohort/:cohortId", (req, res) => {
   }
 
   Student.findById(cohortId)
-    .populate("cohorts")
+    .populate("_id")
     .then((foundStudentCohort) => {
       res.status(200).json(foundStudentCohort);
     })
@@ -304,7 +305,7 @@ app.get("/students/:studentId", (req, res) => {
   }
 
   Student.findById(studentId)
-    .populate("cohorts")
+    .populate("_id")
     .then((foundStudent) => {
       console.log(foundStudent);
       res.status(200).json(foundStudent);
@@ -346,3 +347,8 @@ app.delete("/students/:studentId", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+//Exports
+
+module.exports = model('Students', studentsSchema)
+module.exports = model('Cohorts', cohortsSchema)
