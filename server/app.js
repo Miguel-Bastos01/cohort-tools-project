@@ -1,4 +1,7 @@
+require("dotenv").config()
+
 const express = require("express");
+<<<<<<< HEAD
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -116,50 +119,34 @@ const studentsSchema = new Schema({
 const Student = mongoose.model("Student", studentsSchema);
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
+=======
+const { PORT } = require("./config/server");
+const connectDB = require("./db");
+const middleware = require("./middleware");
+const authRoutes = require("./routes/auth");
+const cohortsRoutes = require("./routes/cohorts");
+const studentsRoutes = require("./routes/students");
+const usersRoutes = require("./routes/users");
+const notFound = require("./error-handling/notFound");
+const errorHandler = require("./error-handling/errorHandler");
+const { isAuthenticated } = require("./middleware/jwt");
+
+>>>>>>> 63f62e3376cf7884c7a32f2395244d113be57038
 const app = express();
 
-// MIDDLEWARE
-// Research Team - Set up CORS middleware here:
-// ...
-app.use(express.json());
-app.use(morgan("dev"));
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(cors());
+middleware.forEach((mw) => app.use(mw));
 
-// ROUTES - https://expressjs.com/en/starter/basic-routing.html
-// Devs Team - Start working on the routes here:
-// ...
+connectDB();
 
-//READ ALL COHORTS - GET - /api/cohorts
-app.get("/cohorts", (req, res) => {
-  Cohort.find()
-    .then((allCohorts) => {
-      res.status(200).json(allCohorts);
-    })
-    .catch((error) => {
-      console.error("error:", error);
-      res.status(500).json({ errorMessage: "Internal server error" });
-    });
-});
+app.use("/auth", authRoutes);
+app.use("/cohorts", isAuthenticated, cohortsRoutes);
+app.use("/students", isAuthenticated, studentsRoutes);
+app.use("/users", isAuthenticated, usersRoutes);
 
-//CREATE NEW COHORT - POST - /api/cohorts
-app.post("/cohorts", (req, res) => {
-  const {
-    cohortSlug,
-    cohortName,
-    program,
-    format,
-    campus,
-    startDate,
-    endDate,
-    inProgress,
-    programManager,
-    leadTeacher,
-    totalHours,
-  } = req.body;
+app.use(notFound);
+app.use(errorHandler);
 
+<<<<<<< HEAD
   Cohort.create({
     cohortSlug,
     cohortName,
@@ -352,3 +339,8 @@ app.listen(PORT, () => {
 
 module.exports = model('Students', studentsSchema)
 module.exports = model('Cohorts', cohortsSchema)
+=======
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+>>>>>>> 63f62e3376cf7884c7a32f2395244d113be57038
